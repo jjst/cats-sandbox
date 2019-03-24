@@ -8,9 +8,10 @@ object CRDTs {
     }
 
     def merge(that: GCounter): GCounter = GCounter {
-      (this.counters.keySet ++ that.counters.keySet).map { key =>
-        (key, List(this.counters.get(key), that.counters.get(key)).flatten.max)
-      } toMap
+      that.counters ++ this.counters.map {
+        case (k, v) =>
+          k -> (v max that.counters.getOrElse(k, 0))
+      }
     }
 
     def total: Int =
